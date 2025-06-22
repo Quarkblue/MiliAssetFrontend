@@ -18,6 +18,12 @@ export async function Fetch<T>(path: string, options: RequestInit = {}): Promise
     )
 
     if (!res.ok) {
+        if (res.status === 401) {
+            sessionStorage.removeItem("token");
+            window.location.href = "/login";
+            return Promise.reject(new Error("Unauthorized"));
+        }
+
         const error = await res.json().catch(() => ({}));
         throw new Error(error.message || "An error occurred while fetching data.");
     }
